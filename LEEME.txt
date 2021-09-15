@@ -1,0 +1,41 @@
+
+==== FUNCIONA =====
+
+OJO A LA SINTAXIS EN LAS HTML DE THYMELEAF: MUCHO LÍO CON LLAVES, PARÉNTESIS, ETC.
+
+AHORA VOY A INTENTAR COMPLICARLO
+
+CON RELACIONES
+
+Las relaciones funcionan teniendo en cuenta estos puntos:
+
+1) en el Controlador, no puedes inyectar el Service de Cursos (no lo admite, no sé por qué), pero sí puedes inyectar el CoursesRepository.
+    con él, rellenamos una variable de clase, coursesList, que contendrá todos los cursos disponibles.
+2) en el Controlador, pasamos esa variable como model.addAttribute a las vistas.
+3) en las vistas de escritura (create, update), metemos un select utilizando thymeleaf que es el que nos permitirá seleccionar entre los
+    cursos disponibles, los que queremos asignar al estudiante.
+
+        <div class="form-group">
+            <label>Courses</label>
+            <select th:field="${student.courses}" name="courses" class="form-control" multiple="true">
+                <option th:each="course :${coursesList}" th:value="${course.id}" th:text="${course.name}" />
+            </select>   
+        </div> 
+
+4) en las vistas de lectura (por ejemplo la tabla que tenemos en students, que muestra los cursos que tiene asignados el estudiante,
+    usamos también el mismo atributo student.courses:
+
+                    <tr th:each="student: ${students}">
+                        <td th:text="${student.firstName}"></td>
+                        <td th:text="${student.lastName}"></td>
+                        <td th:text="${student.email}"></td>
+                        <td> 
+                            <th:block th:each="course,iter: ${student.courses}">
+                                <label th:text="${course.name}"/>
+                                <th:block th:if="${!iter.last}">, </th:block>
+                            </th:block>
+                        </td>
+                    .......
+                    </tr>
+
+
